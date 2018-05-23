@@ -11,7 +11,7 @@ class Uschool():
 
     def login(self, id, password):
         self.websession.post('https://uschool.uplus.co.kr/member/login/', params={'id':id, 'password':password})
-        self.SESSION = self.websession.cookies.get('SESSION')
+        self.SESSION = self.websession.cookies.get('SESSION', domain='uschool.uplus.co.kr')
     
     def sessionlogin(self, session):
         self.SESSION = session
