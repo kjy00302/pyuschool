@@ -8,10 +8,11 @@ class Uschool():
         self.websession = requests.session()
         self.SESSION = None
         self.classes = None
+        self.domain = 'www.atechplus.co.kr'
 
     def login(self, id, password):
-        self.websession.post('https://uschool.uplus.co.kr/member/login/', params={'id':id, 'password':password})
-        self.SESSION = self.websession.cookies.get('SESSION', domain='uschool.uplus.co.kr')
+        self.websession.post('https://{dom}/member/login/'.format(dom=self.domain), params={'id':id, 'password':password})
+        self.SESSION = self.websession.cookies.get('SESSION', domain=self.domain)
     
     def sessionlogin(self, session):
         self.SESSION = session
@@ -24,7 +25,7 @@ class Uschool():
         isdone = False
         page = 0
         while not isdone:
-            soup = bs4.BeautifulSoup(self.websession.get('https://uschool.uplus.co.kr/course/?page=%d' % page).text, "lxml")
+            soup = bs4.BeautifulSoup(self.websession.get('https://{dom}/course/?page={n}'.format(dom=self.domain, n=page)).text, "lxml")
             extraction = soup.findAll('td', attrs={'class':None})
             if (extraction != []):
                 classes.extend(extraction)
@@ -63,7 +64,7 @@ class Uschool():
         self.classes = self.prettierclass(self.classcrawler())
 
     def apply_lesson(self, lesson_code):
-        status = self.websession.get('https://uschool.uplus.co.kr/course/%d/apply.popup' % lesson_code)
+        status = self.websession.get('https://{dom}/course/{code}/apply.popup'.format(dom=self.domain, code=lesson_code))
         if (status.text.find('정상적으로 완료') != -1):
             pass
         elif (status.text.find('이미 수강신청 한 강좌입니다') != -1):
